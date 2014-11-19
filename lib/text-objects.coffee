@@ -9,6 +9,12 @@ class SelectInsideWord extends TextObject
     @editor.selectWordsContainingCursors()
     [true]
 
+class SelectInsideWholeWord extends TextObject
+  select: ->
+    @editor.selectWordsContainingCursors()
+    # TODO
+    [true]
+
 # SelectInsideQuotes and the next class defined (SelectInsideBrackets) are
 # almost-but-not-quite-repeated code. They are different because of the depth
 # checks in the bracket matcher.
@@ -131,6 +137,12 @@ class SelectInsideBrackets extends TextObject
     select
 
 class SelectAWord extends TextObject
+  select: ->
+    @editor.selectWordsContainingCursors()
+    @editor.selectToBeginningOfNextWord()
+    [true]
+
+class SelectAWholeWord extends TextObject
   select: ->
     @editor.selectWordsContainingCursors()
     @editor.selectToBeginningOfNextWord()

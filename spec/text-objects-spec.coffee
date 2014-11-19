@@ -47,6 +47,29 @@ describe "TextObjects", ->
 
       expect(editor.getSelectedScreenRange()).toEqual [[0, 6], [0, 11]]
 
+  describe "the 'iW' text object", ->
+    beforeEach ->
+      editor.setText("12345 abcde-fgh ABCDE")
+      editor.setCursorScreenPosition([0, 9])
+
+    it "applies operators inside the current word in operator-pending mode", ->
+      keydown('d')
+      keydown('i')
+      keydown('W')
+
+      expect(editor.getText()).toBe "12345  ABCDE"
+      expect(editor.getCursorScreenPosition()).toEqual [0, 6]
+      expect(vimState.getRegister('"').text).toBe "abcde-fgh"
+      expect(editorView).not.toHaveClass('operator-pending-mode')
+      expect(editorView).toHaveClass('command-mode')
+
+    it "selects inside the current word in visual mode", ->
+      keydown('v')
+      keydown('i')
+      keydown('W')
+
+      expect(editor.getSelectedScreenRange()).toEqual [[0, 6], [0, 15]]
+
   describe "the 'i(' text object", ->
     beforeEach ->
       editor.setText("( something in here and in (here) )")
@@ -233,6 +256,29 @@ describe "TextObjects", ->
       keydown('w')
 
       expect(editor.getSelectedScreenRange()).toEqual [[0, 6], [0, 12]]
+
+  describe "the 'aW' text object", ->
+    beforeEach ->
+      editor.setText("12345 abcde-fgh ABCDE")
+      editor.setCursorScreenPosition([0, 9])
+
+    it "applies operators from the start of the current word to the start of the next word in operator-pending mode", ->
+      keydown('d')
+      keydown('a')
+      keydown('W')
+
+      expect(editor.getText()).toBe "12345 ABCDE"
+      expect(editor.getCursorScreenPosition()).toEqual [0, 6]
+      expect(vimState.getRegister('"').text).toBe "abcde-fgh "
+      expect(editorView).not.toHaveClass('operator-pending-mode')
+      expect(editorView).toHaveClass('command-mode')
+
+    it "selects from the start of the current word to the start of the next word in visual mode", ->
+      keydown('v')
+      keydown('a')
+      keydown('W')
+
+      expect(editor.getSelectedScreenRange()).toEqual [[0, 6], [0, 16]]
 
   describe "the 'a(' text object", ->
     beforeEach ->
